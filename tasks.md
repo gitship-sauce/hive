@@ -5,7 +5,7 @@
 ## 0. Setup
 - [x] **T0.1** Create the Next.js app (TypeScript, Tailwind, ESLint, App Router).
   Done when: `npm run dev` shows the start page and `npm run lint` passes.
-- [ ] **T0.2** Postgres in Docker (`docker-compose.yml` service `db`, saved in a named volume).
+- [x] **T0.2** Postgres in Docker (`docker-compose.yml` service `db`, saved in a named volume).
   Done when: `docker compose up -d db` starts a healthy database, and its data is still there after `down` and `up`.
 - [ ] **T0.3** Drizzle connected, with the users and sessions tables and a first migration.
   Done when: `npm run db:migrate` creates the tables, and a test can insert and read back a user.
