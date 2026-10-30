@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Rules for this project
 
 Read `PLAN.md` for what we are building and `tasks.md` for what to do next.
