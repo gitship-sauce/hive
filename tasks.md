@@ -53,9 +53,9 @@
   Done when: the bell shows the unread count; opening `/notifications` lists them newest first and marks them read.
 - [x] **T6.3** Live bell.
   Done when: B's bell count goes up without a refresh when A follows or messages B.
-- [~] **T6.4** Turn on push (browser side).
+- [x] **T6.4** Turn on push (browser side).
   Done when: a "Turn on notifications" button asks permission only when clicked, gets a Firebase Installation ID and saves it for this login; without Firebase keys the button doesn't show.
-- [~] **T6.5** Send push from the server.
+- [x] **T6.5** Send push from the server.
   Done when: a new notification sends a Firebase push to all of that user's browsers; an installation ID Firebase says is gone is deleted; without Firebase keys nothing is sent and the server logs that push is off.
 
 ## 7. Ship it
@@ -63,7 +63,7 @@
   Done when: a fresh clone + `cp .env.example .env` + `docker compose up --build` gives a working app at http://localhost:3000.
 - [~] **T7.2** GitHub Actions runs `npm run check` and `npm run e2e` on every push.
   Done when: the workflow is green on GitHub.
-- [~] **T7.3** README.
+- [x] **T7.3** README.
   Done when: someone new can start the app, run the tests and set up Firebase by following only the README.
 
 ## Found while building
@@ -91,7 +91,7 @@
   Done when: the app uses installation IDs, and PLAN.md and T6.4/T6.5 say so.
 - [x] **F12** `npm audit` found 4 high issues through the `firebase` package, which brings Firestore and gRPC we never use.
   Done when: only `@firebase/app` and `@firebase/messaging` are installed and `npm audit --omit=dev` finds 0.
-- [ ] **F13** T6.4 and T6.5 are checked with a fake Firebase. Check them once with a real Firebase project.
+- [x] **F13** T6.4 and T6.5 are checked with a fake Firebase. Check them once with a real Firebase project.
   Done when: with B's tab closed, A follows B and B's computer shows the push; clicking it opens A's profile.
 
 ### From an independent code review (a fresh Claude, given only the code)
@@ -119,3 +119,5 @@
 ### From the real Firebase check
 - [x] **F24** In a browser whose push service never answers (Brave with Google push off, Chromium test builds), "Turn on notifications" spun on "Turning on…" forever with no error.
   Done when: after 20 seconds it says the push service didn't answer and names the Brave setting (checked in Chromium for Testing against the real Firebase project).
+- [x] **F25** In Brave with Google push off, Firebase failed at once with "AbortError: Registration failed - push service error", and the page showed only "Couldn't turn on".
+  Done when: that error shows the same Brave help as F24. Real check: after turning the setting on and restarting Brave, the pop-up arrived with the tab closed.

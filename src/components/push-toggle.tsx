@@ -11,6 +11,14 @@ const PUSH_TIMEOUT_MS = 20_000;
 
 class NoPushServiceError extends Error {}
 
+/** True when the browser's push service is missing or refused: no answer, or Chrome/Brave's "push service error". */
+function isPushServiceProblem(err: unknown) {
+  return (
+    err instanceof NoPushServiceError ||
+    (err instanceof DOMException && err.name === "AbortError" && /push service/i.test(err.message))
+  );
+}
+
 /** Some browsers never answer (Brave with Google push off, test builds of Chromium). Don't wait forever. */
 function withTimeout<T>(promise: Promise<T>) {
   return Promise.race([
@@ -78,7 +86,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
       if (current) setStatus("on");
     })().catch((err) => {
       console.error("Push setup failed", err);
-      if (current) setStatus(err instanceof NoPushServiceError ? "no-push-service" : "error");
+      if (current) setStatus(isPushServiceProblem(err) ? "no-push-service" : "error");
     });
     return () => {
       current = false;
@@ -94,7 +102,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
       setStatus("on");
     } catch (err) {
       console.error("Push setup failed", err);
-      setStatus(err instanceof NoPushServiceError ? "no-push-service" : "error");
+      setStatus(isPushServiceProblem(err) ? "no-push-service" : "error");
     }
   }
 
@@ -106,7 +114,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
     on: "Push notifications are on for this browser.",
     blocked: "Notifications are blocked. Allow them in your browser's site settings.",
     "no-push-service":
-      "This browser's push service didn't answer. In Brave, turn on \"Use Google services for push messaging\" in Settings → Privacy and security.",
+      "This browser's push service didn't work. In Brave, turn on \"Use Google services for push messaging\" in Settings → Privacy and security, then quit and reopen Brave.",
     error: "Couldn't turn on push notifications. Try again.",
   };
 
