@@ -13,7 +13,7 @@
   Done when: `npm run check` runs lint, types and one passing test, and `npm run e2e` opens the home page.
 
 ## 1. Sign up and log in
-- [ ] **T1.1** Sign up with username and password.
+- [x] **T1.1** Sign up with username and password.
   Done when: a new user can sign up and lands on the feed logged in; a taken username, bad characters or a password under 8 characters each show a clear error; the password is stored only as a bcrypt hash.
 - [ ] **T1.2** Log in and log out.
   Done when: the right password logs in; a wrong one shows "Wrong username or password"; log out ends the session in the database and the cookie stops working.
@@ -71,3 +71,5 @@
   Done when: T0.4 is built first and both are committed together.
 - [x] **F2** `npm run db:migrate` did nothing: the "run directly" check broke on the space in the folder path.
   Done when: migrations run from a folder whose path has a space.
+- [x] **F3** The session check used `new Date()`, and Next.js stopped the page: it won't read the clock while it prerenders.
+  Done when: the expiry check uses the database's `now()` and the sign-up browser test lands on the feed.
