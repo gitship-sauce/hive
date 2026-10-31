@@ -14,3 +14,10 @@ export async function signUp(page: Page, username: string, password = "password1
   await page.getByRole("button", { name: "Sign up" }).click();
   await expect(page).toHaveURL("/");
 }
+
+export async function logIn(page: Page, username: string, password = "password123") {
+  await page.goto("/login");
+  await page.getByLabel("Username").fill(username);
+  await page.getByLabel("Password").fill(password);
+  await page.getByRole("button", { name: "Log in" }).click();
+}

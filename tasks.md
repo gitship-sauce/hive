@@ -15,7 +15,7 @@
 ## 1. Sign up and log in
 - [x] **T1.1** Sign up with username and password.
   Done when: a new user can sign up and lands on the feed logged in; a taken username, bad characters or a password under 8 characters each show a clear error; the password is stored only as a bcrypt hash.
-- [ ] **T1.2** Log in and log out.
+- [x] **T1.2** Log in and log out.
   Done when: the right password logs in; a wrong one shows "Wrong username or password"; log out ends the session in the database and the cookie stops working.
 - [ ] **T1.3** Pages need a login.
   Done when: a logged-out visitor to `/`, `/search`, `/messages` or `/notifications` is sent to `/login`.
