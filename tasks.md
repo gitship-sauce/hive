@@ -21,7 +21,7 @@
   Done when: a logged-out visitor to `/`, `/search`, `/messages` or `/notifications` is sent to `/login`.
 
 ## 2. Posts and feed
-- [ ] **T2.1** Write a post.
+- [x] **T2.1** Write a post.
   Done when: a post of 1–280 characters is saved for the logged-in user; an empty or too-long post shows an error and saves nothing.
 - [ ] **T2.2** The feed.
   Done when: the feed shows my posts and the posts of people I follow, newest first, and never posts of people I don't follow.

@@ -18,3 +18,16 @@ export const credentialsSchema = z.object({ username: usernameSchema, password: 
 export function firstError(error: z.ZodError): string {
   return error.issues[0]?.message ?? "Invalid input.";
 }
+
+/** Length in characters as people count them (and as Postgres char_length does): an emoji is 1, not 2. */
+export function charCount(text: string) {
+  return [...text].length;
+}
+
+export const POST_MAX = 280;
+
+export const postBodySchema = z
+  .string()
+  .trim()
+  .min(1, "Write something first.")
+  .refine((b) => charCount(b) <= POST_MAX, `Posts can be up to ${POST_MAX} characters.`);
