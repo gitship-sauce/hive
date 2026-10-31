@@ -5,7 +5,21 @@ import { getMessaging, isSupported, onRegistered, register } from "@firebase/mes
 import { useEffect, useState } from "react";
 import type { FirebaseWebConfig } from "@/lib/firebase-config";
 
-type Status = "checking" | "unsupported" | "off" | "working" | "on" | "blocked" | "error";
+type Status = "checking" | "unsupported" | "off" | "working" | "on" | "blocked" | "no-push-service" | "error";
+
+const PUSH_TIMEOUT_MS = 20_000;
+
+class NoPushServiceError extends Error {}
+
+/** Some browsers never answer (Brave with Google push off, test builds of Chromium). Don't wait forever. */
+function withTimeout<T>(promise: Promise<T>) {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new NoPushServiceError("The browser's push service didn't answer")), PUSH_TIMEOUT_MS),
+    ),
+  ]);
+}
 
 async function sendFidToServer(fid: string) {
   const res = await fetch("/api/push/register", {
@@ -39,8 +53,7 @@ async function enablePush(config: FirebaseWebConfig, onLaterError: (err: unknown
       }
     });
   });
-  await register(messaging, { vapidKey, serviceWorkerRegistration });
-  await saved;
+  await withTimeout(Promise.all([register(messaging, { vapidKey, serviceWorkerRegistration }), saved]));
 }
 
 export function PushToggle({ config }: { config: FirebaseWebConfig }) {
@@ -65,7 +78,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
       if (current) setStatus("on");
     })().catch((err) => {
       console.error("Push setup failed", err);
-      if (current) setStatus("error");
+      if (current) setStatus(err instanceof NoPushServiceError ? "no-push-service" : "error");
     });
     return () => {
       current = false;
@@ -81,7 +94,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
       setStatus("on");
     } catch (err) {
       console.error("Push setup failed", err);
-      setStatus("error");
+      setStatus(err instanceof NoPushServiceError ? "no-push-service" : "error");
     }
   }
 
@@ -92,13 +105,15 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
     working: "Turning on…",
     on: "Push notifications are on for this browser.",
     blocked: "Notifications are blocked. Allow them in your browser's site settings.",
+    "no-push-service":
+      "This browser's push service didn't answer. In Brave, turn on \"Use Google services for push messaging\" in Settings → Privacy and security.",
     error: "Couldn't turn on push notifications. Try again.",
   };
 
   return (
     <div data-testid="push-toggle" className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800">
       <span className="text-neutral-600 dark:text-neutral-400">{text[status]}</span>
-      {(status === "off" || status === "error") && (
+      {(status === "off" || status === "error" || status === "no-push-service") && (
         <button
           type="button"
           onClick={turnOn}

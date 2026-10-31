@@ -115,3 +115,7 @@
   Done when: it is checked with zod like every other input.
 - [x] **F23** `npm run dev` listened on every network interface, not only this computer.
   Done when: the server listens on HOSTNAME (localhost unless set; Docker sets 0.0.0.0).
+
+### From the real Firebase check
+- [x] **F24** In a browser whose push service never answers (Brave with Google push off, Chromium test builds), "Turn on notifications" spun on "Turning on…" forever with no error.
+  Done when: after 20 seconds it says the push service didn't answer and names the Brave setting (checked in Chromium for Testing against the real Firebase project).
