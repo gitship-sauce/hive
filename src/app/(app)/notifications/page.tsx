@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { LocalTime } from "@/components/local-time";
 import { MarkRead } from "@/components/mark-read";
+import { PushToggle } from "@/components/push-toggle";
 import { requireUser } from "@/lib/auth";
+import { getFirebaseWebConfig } from "@/lib/firebase-config";
 import { getNotifications, type NotificationView } from "@/lib/notifications";
 
 export const metadata = { title: "Notifications · Hive" };
@@ -27,10 +29,12 @@ function describe(n: NotificationView) {
 async function List() {
   const me = await requireUser();
   const list = await getNotifications(me.id);
+  const firebase = getFirebaseWebConfig();
 
   return (
     <>
       <MarkRead />
+      {firebase && <PushToggle config={firebase} />}
       {list.length === 0 ? (
         <p className="py-8 text-center text-neutral-500">Nothing yet. Follows and messages show up here.</p>
       ) : (

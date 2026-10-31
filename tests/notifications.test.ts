@@ -8,10 +8,12 @@ import { notify } from "@/lib/notify";
 import { getHub } from "@/lib/realtime";
 import { makeUser } from "./helpers";
 
+const PUSH = { title: "t", body: "b", url: "/" };
+
 // The same steps the follow and message actions run.
 async function followAndNotify(from: number, to: number) {
   const r = await follow(from, to);
-  if (r.ok && r.created) await notify({ userId: to, type: "follow", actorId: from });
+  if (r.ok && r.created) await notify({ userId: to, type: "follow", actorId: from }, PUSH);
 }
 
 describe("save notifications (T6.1)", () => {
@@ -27,7 +29,7 @@ describe("save notifications (T6.1)", () => {
     const gitsy = await makeUser("gitsy");
     const sammy = await makeUser("sammy");
     const m = await saveMessage({ id: sammy, username: "sammy" }, { id: gitsy, username: "gitsy" }, "hi");
-    await notify({ userId: gitsy, type: "message", actorId: sammy, messageId: m.id });
+    await notify({ userId: gitsy, type: "message", actorId: sammy, messageId: m.id }, PUSH);
     expect((await getNotifications(gitsy)).map((n) => [n.type, n.actor])).toEqual([["message", "sammy"]]);
   });
 
@@ -73,11 +75,11 @@ describe("live bell (T6.3)", () => {
     const sammy = await makeUser("sammy");
     const send = vi.spyOn(getHub(), "sendToUser");
 
-    await notify({ userId: gitsy, type: "follow", actorId: sammy });
+    await notify({ userId: gitsy, type: "follow", actorId: sammy }, PUSH);
     expect(send).toHaveBeenLastCalledWith(gitsy, { type: "notifications", unread: 1 });
 
     send.mockClear();
-    await notify({ userId: gitsy, type: "follow", actorId: sammy });
+    await notify({ userId: gitsy, type: "follow", actorId: sammy }, PUSH);
     expect(send).not.toHaveBeenCalled();
     send.mockRestore();
   });

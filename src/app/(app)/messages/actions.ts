@@ -7,6 +7,12 @@ import { notify } from "@/lib/notify";
 import { getHub } from "@/lib/realtime";
 import { firstError, messageBodySchema, usernameSchema } from "@/lib/validation";
 
+/** Short enough for a phone's notification. */
+function preview(text: string) {
+  const chars = [...text];
+  return chars.length > 100 ? `${chars.slice(0, 99).join("")}…` : text;
+}
+
 export type SendResult = { ok: true; message: MessageView } | { ok: false; error: string };
 
 export async function sendMessage(toUsername: string, formData: FormData): Promise<SendResult> {
@@ -25,6 +31,9 @@ export async function sendMessage(toUsername: string, formData: FormData): Promi
   const hub = getHub();
   hub.sendToUser(toId, { type: "message", message });
   hub.sendToUser(me.id, { type: "message", message }); // my other open tabs
-  await notify({ userId: toId, type: "message", actorId: me.id, messageId: message.id });
+  await notify(
+    { userId: toId, type: "message", actorId: me.id, messageId: message.id },
+    { title: `@${me.username}`, body: preview(message.body), url: `/messages/${me.username}` },
+  );
   return { ok: true, message };
 }

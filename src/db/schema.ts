@@ -114,3 +114,21 @@ export const notifications = pgTable(
     uniqueIndex("notifications_one_follow_idx").on(t.userId, t.actorId).where(sql`${t.type} = 'follow'`),
   ],
 );
+
+export const pushRegistrations = pgTable(
+  "push_registrations",
+  {
+    /** Firebase Installation ID of one browser. */
+    fid: text("fid").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Tied to the login: log out deletes the session and, with it, this browser's push.
+    // So the next person on a shared computer never gets the last person's notifications.
+    sessionId: text("session_id")
+      .notNull()
+      .references(() => sessions.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("push_registrations_user_idx").on(t.userId)],
+);

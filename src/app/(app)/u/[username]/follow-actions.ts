@@ -18,7 +18,12 @@ export async function setFollowing(username: string, shouldFollow: boolean): Pro
   if (shouldFollow) {
     const result = await follow(viewer.id, targetId);
     if (!result.ok) return { error: result.error };
-    if (result.created) await notify({ userId: targetId, type: "follow", actorId: viewer.id });
+    if (result.created) {
+      await notify(
+        { userId: targetId, type: "follow", actorId: viewer.id },
+        { title: "New follower", body: `@${viewer.username} followed you`, url: `/u/${viewer.username}` },
+      );
+    }
   } else {
     await unfollow(viewer.id, targetId);
   }

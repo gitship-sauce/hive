@@ -36,7 +36,7 @@ Firebase is optional. Without its keys, everything works except the system pop-u
 - **follows:** follower id, following id, created at. One row per pair, and you can't follow yourself.
 - **messages:** id, sender id, recipient id, body (1–1000), created at
 - **notifications:** id, user id (who gets it), type (follow or message), actor id (who did it), message id, created at, read at
-- **push_tokens:** token, user id, created at
+- **push_registrations:** Firebase Installation ID, user id, session id (log out removes it), created at
 
 ## Pages
 

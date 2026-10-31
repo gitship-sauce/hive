@@ -53,10 +53,10 @@
   Done when: the bell shows the unread count; opening `/notifications` lists them newest first and marks them read.
 - [x] **T6.3** Live bell.
   Done when: B's bell count goes up without a refresh when A follows or messages B.
-- [ ] **T6.4** Turn on push (browser side).
-  Done when: a "Turn on notifications" button asks permission only when clicked, gets a Firebase token and saves it for the user; without Firebase keys the button doesn't show.
-- [ ] **T6.5** Send push from the server.
-  Done when: a new notification sends a Firebase push to all of that user's tokens; a token Firebase says is dead is deleted; without Firebase keys nothing is sent and the server logs that push is off.
+- [~] **T6.4** Turn on push (browser side).
+  Done when: a "Turn on notifications" button asks permission only when clicked, gets a Firebase Installation ID and saves it for this login; without Firebase keys the button doesn't show.
+- [~] **T6.5** Send push from the server.
+  Done when: a new notification sends a Firebase push to all of that user's browsers; an installation ID Firebase says is gone is deleted; without Firebase keys nothing is sent and the server logs that push is off.
 
 ## 7. Ship it
 - [ ] **T7.1** The whole app in Docker (`Dockerfile` + `app` service).
@@ -87,3 +87,9 @@
   Done when: after every (re)connect the chat loads the conversation again, and a test that cuts B's connection sees the missed message appear.
 - [x] **F10** A message browser test clicked the header's "Messages" link instead of the profile's "Message" button: role names match parts of words unless told to match exactly ("Follow" also matched "Unfollow").
   Done when: every role lookup in the browser tests is exact, and the suite passes 3 runs in a row.
+- [x] **F11** The plan said Firebase "tokens", but Firebase now marks registration tokens deprecated and recommends Firebase Installation IDs (`register()` + `onRegistered()` in the browser, `fid` on the server).
+  Done when: the app uses installation IDs, and PLAN.md and T6.4/T6.5 say so.
+- [x] **F12** `npm audit` found 4 high issues through the `firebase` package, which brings Firestore and gRPC we never use.
+  Done when: only `@firebase/app` and `@firebase/messaging` are installed and `npm audit --omit=dev` finds 0.
+- [ ] **F13** T6.4 and T6.5 are checked with a fake Firebase. Check them once with a real Firebase project.
+  Done when: with B's tab closed, A follows B and B's computer shows the push; clicking it opens A's profile.
