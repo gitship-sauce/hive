@@ -16,16 +16,28 @@ async function sendFidToServer(fid: string) {
   if (!res.ok) throw new Error(`Saving the push registration failed (${res.status})`);
 }
 
-/** Registers this browser with Firebase and tells our server its installation id. */
-async function enablePush(config: FirebaseWebConfig) {
+/**
+ * Registers this browser with Firebase and tells our server its installation id.
+ * `onLaterError` gets failures of later updates (Firebase can change the id at any time).
+ */
+async function enablePush(config: FirebaseWebConfig, onLaterError: (err: unknown) => void) {
   const { vapidKey, ...appConfig } = config;
   const app = getApps()[0] ?? initializeApp(appConfig);
   const messaging = getMessaging(app);
   const serviceWorkerRegistration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 
+  let first = true;
   const saved = new Promise<void>((resolve, reject) => {
-    // Also fires later if Firebase rotates the id; the server then gets the new one.
-    onRegistered(messaging, (fid) => sendFidToServer(fid).then(resolve, reject));
+    onRegistered(messaging, (fid) => {
+      const sending = sendFidToServer(fid);
+      if (first) {
+        first = false;
+        sending.then(resolve, reject);
+      } else {
+        // A later id change: nobody is waiting for it, so report a failure here.
+        sending.catch(onLaterError);
+      }
+    });
   });
   await register(messaging, { vapidKey, serviceWorkerRegistration });
   await saved;
@@ -33,6 +45,11 @@ async function enablePush(config: FirebaseWebConfig) {
 
 export function PushToggle({ config }: { config: FirebaseWebConfig }) {
   const [status, setStatus] = useState<Status>("checking");
+
+  function onLaterError(err: unknown) {
+    console.error("Saving the new push id failed", err);
+    setStatus("error");
+  }
 
   useEffect(() => {
     let current = true;
@@ -44,7 +61,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
       if (Notification.permission !== "granted") return setStatus("off");
       // Already allowed: link this browser to the current login without asking again.
       setStatus("working");
-      await enablePush(config);
+      await enablePush(config, onLaterError);
       if (current) setStatus("on");
     })().catch((err) => {
       console.error("Push setup failed", err);
@@ -60,7 +77,7 @@ export function PushToggle({ config }: { config: FirebaseWebConfig }) {
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") return setStatus(permission === "denied" ? "blocked" : "off");
-      await enablePush(config);
+      await enablePush(config, onLaterError);
       setStatus("on");
     } catch (err) {
       console.error("Push setup failed", err);

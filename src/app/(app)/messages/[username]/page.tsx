@@ -19,7 +19,7 @@ export default function ChatPage({ params }: PageProps<"/messages/[username]">) 
 
 async function Chat({ params }: Pick<PageProps<"/messages/[username]">, "params">) {
   const me = await requireUser();
-  const parsed = usernameSchema.safeParse(decodeURIComponent((await params).username));
+  const parsed = usernameSchema.safeParse((await params).username);
   if (!parsed.success) notFound();
   const otherId = await getUserIdByUsername(parsed.data);
   if (otherId === null) notFound();

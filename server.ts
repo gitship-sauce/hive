@@ -25,8 +25,9 @@ const server = createServer((req, res) => {
     res.end();
   });
 });
-attachRealtime(server);
+attachRealtime(server, { dev: !production });
 
-server.listen(port, () => {
+// Listen only on HOSTNAME (localhost by default), so a dev server isn't open to the whole network.
+server.listen(port, hostname, () => {
   console.log(`> Hive ready on http://${hostname}:${port} (${production ? "production" : "development"})`);
 });

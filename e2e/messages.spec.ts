@@ -132,3 +132,15 @@ test("the conversation list shows the latest message and updates live (T5.4)", a
   await row.click();
   await expect(pageB).toHaveURL(`/messages/${a}`);
 });
+
+test("a message that is too long shows an error and keeps the text (F16)", async ({ browser }) => {
+  const [a, b] = [uniqueName("alice"), uniqueName("bob")];
+  await signUp(await browser.newPage(), b);
+  const page = await browser.newPage();
+  await signUp(page, a);
+  await page.goto(`/messages/${b}`);
+  const long = "x".repeat(1001);
+  await sendMessage(page, long);
+  await expect(page.getByRole("alert").filter({ hasText: "Messages can be up to 1000 characters." })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Message", exact: true })).toHaveValue(long);
+});

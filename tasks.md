@@ -93,3 +93,25 @@
   Done when: only `@firebase/app` and `@firebase/messaging` are installed and `npm audit --omit=dev` finds 0.
 - [ ] **F13** T6.4 and T6.5 are checked with a fake Firebase. Check them once with a real Firebase project.
   Done when: with B's tab closed, A follows B and B's computer shows the push; clicking it opens A's profile.
+
+### From an independent code review (a fresh Claude, given only the code)
+- [x] **F14** A browser that disconnected while `/ws` was checking its session crashed the whole server: the raw socket had no error listener during the database lookup.
+  Done when: a test resets the connection mid-check and the server keeps working (without the fix, the run fails with ECONNRESET).
+- [x] **F15** If saving the notification failed, "send message" and "follow" showed an error even though they had worked, so people would retry and send twice.
+  Done when: notify() logs the error and never throws, and logged-in pages have an error page instead of a crash.
+- [x] **F16** Sending a too-long message showed the error but wiped what you typed (React clears a form after its action).
+  Done when: a browser test sends 1001 characters and the text is still in the box.
+- [x] **F17** WebSocket requests to any path except `/ws` were never answered and stayed open forever.
+  Done when: they get 404; in development `/_next/` is still left to Next.js's live reload.
+- [x] **F18** `/u/%25` gave a server error: the page decoded the address a second time.
+  Done when: odd characters in the address show "User not found".
+- [x] **F19** In Docker the server runs as `node`, but `.next` belonged to root, so the server couldn't write its cache.
+  Done when: `.next` is owned by `node` in the image and a write works.
+- [x] **F20** After a too-long post failed, the counter said 0 while the text was still there.
+  Done when: a browser test sees "281/280" next to the restored text.
+- [x] **F21** If Firebase changed a browser's installation ID later and saving it failed, nothing was logged or shown.
+  Done when: later failures are logged and the button shows the error state.
+- [x] **F22** The follow action used a true/false sent by the browser without checking it.
+  Done when: it is checked with zod like every other input.
+- [x] **F23** `npm run dev` listened on every network interface, not only this computer.
+  Done when: the server listens on HOSTNAME (localhost unless set; Docker sets 0.0.0.0).

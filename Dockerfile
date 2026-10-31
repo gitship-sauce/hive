@@ -22,7 +22,8 @@ FROM node:24-alpine AS run
 WORKDIR /app
 ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000
 COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/.next ./.next
+# The server writes its cache into .next, so the node user must own it.
+COPY --from=build --chown=node:node /app/.next ./.next
 COPY package.json tsconfig.json next.config.ts server.ts ./
 COPY public ./public
 COPY src ./src

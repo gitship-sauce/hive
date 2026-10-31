@@ -6,13 +6,21 @@ import { getHub } from "./realtime";
  * Saves a notification for someone, updates the bell in their open tabs,
  * and sends a push to browsers where they turned push on.
  * The one place every "X did something to you" goes through.
+ *
+ * Never throws: it runs after the follow or message already happened, and failing then would
+ * make the user think it didn't (and try again). Errors are logged instead.
  */
 export async function notify(input: NotificationInput, push: PushContent) {
-  const created = await createNotification(input);
-  if (!created) return null;
+  try {
+    const created = await createNotification(input);
+    if (!created) return null;
 
-  const unread = await getUnreadCount(input.userId);
-  getHub().sendToUser(input.userId, { type: "notifications", unread });
-  void queuePush(input.userId, push);
-  return created;
+    const unread = await getUnreadCount(input.userId);
+    getHub().sendToUser(input.userId, { type: "notifications", unread });
+    void queuePush(input.userId, push);
+    return created;
+  } catch (err) {
+    console.error(`Couldn't notify user ${input.userId} (${input.type})`, err);
+    return null;
+  }
 }

@@ -20,7 +20,7 @@ export default function ProfilePage({ params }: PageProps<"/u/[username]">) {
 
 async function ProfileView({ params }: Pick<PageProps<"/u/[username]">, "params">) {
   const viewer = await requireUser();
-  const parsed = usernameSchema.safeParse(decodeURIComponent((await params).username));
+  const parsed = usernameSchema.safeParse((await params).username);
   if (!parsed.success) notFound();
   const profile = await getProfile(parsed.data, viewer.id);
   if (!profile) notFound();

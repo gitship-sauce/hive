@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { sendMessage } from "@/app/(app)/messages/actions";
 import type { MessageView } from "@/lib/messages";
 import { useRealtime } from "./realtime-provider";
@@ -18,8 +18,8 @@ function merge(list: MessageView[], incoming: MessageView) {
 export function ChatThread({ me, other, initial }: Props) {
   const [list, setList] = useState(initial);
   const [error, setError] = useState<string | null>(null);
+  const [text, setText] = useState("");
   const [pending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { subscribe, connections } = useRealtime();
@@ -54,7 +54,11 @@ export function ChatThread({ me, other, initial }: Props) {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [list.length]);
 
-  function submit(formData: FormData) {
+  // A plain onSubmit, not <form action>: React clears a form after its action runs,
+  // which would wipe the text when sending fails (for example, too long).
+  function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     startTransition(async () => {
       const result = await sendMessage(other, formData);
       if (!result.ok) {
@@ -62,8 +66,8 @@ export function ChatThread({ me, other, initial }: Props) {
         return;
       }
       setError(null);
+      setText("");
       setList((l) => merge(l, result.message));
-      formRef.current?.reset();
     });
   }
 
@@ -94,13 +98,15 @@ export function ChatThread({ me, other, initial }: Props) {
       </ol>
       <div ref={bottomRef} />
 
-      <form ref={formRef} action={submit} className="sticky bottom-0 flex gap-2 border-t border-neutral-200 bg-[var(--background)] py-3 dark:border-neutral-800">
+      <form onSubmit={submit} className="sticky bottom-0 flex gap-2 border-t border-neutral-200 bg-[var(--background)] py-3 dark:border-neutral-800">
         <label htmlFor="message-body" className="sr-only">
           Message
         </label>
         <input
           id="message-body"
           name="body"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
           autoComplete="off"
           placeholder={`Message @${other}`}
           className="flex-1 rounded-full border border-neutral-300 bg-white px-4 py-2 text-neutral-900 outline-none focus:border-amber-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"

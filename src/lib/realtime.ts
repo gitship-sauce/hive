@@ -68,17 +68,29 @@ function readCookie(header: string | undefined, name: string) {
 }
 
 function refuse(socket: Duplex, status: string) {
-  socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\n\r\n`);
+  if (!socket.destroyed) socket.end(`HTTP/1.1 ${status}\r\nConnection: close\r\n\r\n`);
 }
 
-/** Adds the WebSocket endpoint at /ws to the server. Other upgrade paths are left to Next.js. */
-export function attachRealtime(server: Server) {
+/**
+ * Adds the WebSocket endpoint at /ws to the server.
+ * In development, Next.js's own live-reload socket (under /_next/) is left to Next.js; anything else is refused.
+ */
+export function attachRealtime(server: Server, { dev }: { dev: boolean }) {
   const wss = new WebSocketServer({ noServer: true });
   const hub = getHub();
 
   server.on("upgrade", async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
     const path = new URL(req.url ?? "/", "http://localhost").pathname;
-    if (path !== WS_PATH) return; // Next.js handles its own (live reload) sockets.
+    if (path !== WS_PATH) {
+      if (dev && path.startsWith("/_next/")) return;
+      // Nobody else answers these, so without this they would stay open forever.
+      return refuse(socket, "404 Not Found");
+    }
+
+    // Node removes its own error handler before "upgrade". Without this one, a browser that
+    // disconnects during the session check below throws an uncaught error and stops the server.
+    const onSocketError = (err: Error) => console.warn("A WebSocket closed before it opened:", err.message);
+    socket.on("error", onSocketError);
 
     try {
       // Browsers send cookies with WebSocket requests from any site, so check the page is ours.
@@ -87,9 +99,11 @@ export function attachRealtime(server: Server) {
 
       const token = readCookie(req.headers.cookie, SESSION_COOKIE);
       const user = await getUserBySessionToken(token);
+      if (socket.destroyed) return;
       if (!user || !token) return refuse(socket, "401 Unauthorized");
 
       wss.handleUpgrade(req, socket, head, (ws) => {
+        socket.off("error", onSocketError);
         const client: Client = { ws, userId: user.id, sessionId: hashToken(token), alive: true };
         ws.on("pong", () => (client.alive = true));
         ws.on("error", (err) => console.error("WebSocket error", err));

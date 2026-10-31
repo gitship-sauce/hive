@@ -8,10 +8,16 @@ export function PostForm() {
   const [state, formAction, pending] = useActionState(createPostAction, {});
   const [length, setLength] = useState(0);
 
+  // After a failed post the text comes back from the server; count it again.
+  const [seenState, setSeenState] = useState(state);
+  if (state !== seenState) {
+    setSeenState(state);
+    setLength(charCount(state.body ?? ""));
+  }
+
   return (
     <form
       action={formAction}
-      onSubmit={() => setLength(0)}
       className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800"
     >
       <label htmlFor="post-body" className="sr-only">

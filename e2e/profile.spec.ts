@@ -26,3 +26,12 @@ test.describe("profile page (T3.1)", () => {
     await expect(page.locator('meta[name="robots"][content="noindex"]').first()).toBeAttached();
   });
 });
+
+test("odd characters in the address show User not found, not an error (F18)", async ({ page }) => {
+  const name = uniqueName("alice");
+  await signUp(page, name);
+  for (const path of ["/u/%25", "/messages/%25", `/u/${encodeURIComponent("%")}${name.slice(1)}`]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { name: "User not found", exact: true })).toBeVisible();
+  }
+});

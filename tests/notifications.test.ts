@@ -84,3 +84,16 @@ describe("live bell (T6.3)", () => {
     send.mockRestore();
   });
 });
+
+describe("a failed notification never fails the action (F15)", () => {
+  it("notify() logs the error and returns null instead of throwing", async () => {
+    const gitsy = await makeUser("gitsy");
+    const sammy = await makeUser("sammy");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    // A notification for a user id that doesn't exist breaks the insert (foreign key).
+    await expect(notify({ userId: 999_999, type: "follow", actorId: sammy }, PUSH)).resolves.toBeNull();
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("Couldn't notify user 999999"), expect.anything());
+    error.mockRestore();
+    expect(await getUnreadCount(gitsy)).toBe(0);
+  });
+});
