@@ -8,7 +8,10 @@ test.describe("our server with a WebSocket (T5.1)", () => {
 
     await signUp(page, uniqueName("ws"));
     await expect.poll(() => sockets).toContain("/ws");
-    await expect.poll(() => sockets.some((p) => p.startsWith("/_next/hmr"))).toBe(true);
+    // Live reload only exists in development; skip that check against a production server.
+    if (!process.env.E2E_BASE_URL) {
+      await expect.poll(() => sockets.some((p) => p.startsWith("/_next/hmr"))).toBe(true);
+    }
   });
 
   test("the socket closes on log out and doesn't reconnect", async ({ page }) => {

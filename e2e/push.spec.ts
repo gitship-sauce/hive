@@ -11,8 +11,8 @@ test.describe("turn on push (T6.4)", () => {
     expect((await page.request.get("/firebase-messaging-sw.js")).status()).toBe(404);
   });
 
-  test("the register API needs a login and a valid installation id", async ({ page, playwright }) => {
-    const anonymous = await playwright.request.newContext({ baseURL: "http://localhost:3100" });
+  test("the register API needs a login and a valid installation id", async ({ page, playwright, baseURL }) => {
+    const anonymous = await playwright.request.newContext({ baseURL });
     const noLogin = await anonymous.post("/api/push/register", { data: { fid: "fid_abcdefghijk" } });
     expect(noLogin.status()).toBe(401);
     await anonymous.dispose();

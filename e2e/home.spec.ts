@@ -8,8 +8,8 @@ test.describe("pages need a login (T1.3)", () => {
     });
   }
 
-  test("a made-up session cookie is sent to /login too", async ({ page, context }) => {
-    await context.addCookies([{ name: "session", value: "made-up", url: "http://localhost:3100" }]);
+  test("a made-up session cookie is sent to /login too", async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: "session", value: "made-up", url: baseURL! }]);
     await page.goto("/");
     await expect(page).toHaveURL("/login");
   });

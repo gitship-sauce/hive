@@ -46,3 +46,7 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+
+# Firebase service account key: never commit it
+/secrets/*
+!/secrets/.gitkeep

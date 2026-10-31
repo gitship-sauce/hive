@@ -17,5 +17,20 @@ services:
       timeout: 3s
       retries: 30
 
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # Inside Docker the database is the "db" service, not localhost.
+      DATABASE_URL: postgres://social:social@db:5432/social
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      # Put firebase-service-account.json in ./secrets to turn on push (see README).
+      - ./secrets:/app/secrets:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data:

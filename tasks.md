@@ -59,7 +59,7 @@
   Done when: a new notification sends a Firebase push to all of that user's browsers; an installation ID Firebase says is gone is deleted; without Firebase keys nothing is sent and the server logs that push is off.
 
 ## 7. Ship it
-- [ ] **T7.1** The whole app in Docker (`Dockerfile` + `app` service).
+- [x] **T7.1** The whole app in Docker (`Dockerfile` + `app` service).
   Done when: a fresh clone + `cp .env.example .env` + `docker compose up --build` gives a working app at http://localhost:3000.
 - [ ] **T7.2** GitHub Actions runs `npm run check` and `npm run e2e` on every push.
   Done when: the workflow is green on GitHub.
