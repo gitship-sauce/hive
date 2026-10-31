@@ -1,10 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
 import { follow, unfollow } from "@/lib/follows";
 import { saveMessage } from "@/lib/messages";
 import { getNotifications, getUnreadCount, markAllRead } from "@/lib/notifications";
 import { notify } from "@/lib/notify";
+import { getHub } from "@/lib/realtime";
 import { makeUser } from "./helpers";
 
 // The same steps the follow and message actions run.
@@ -63,5 +64,21 @@ describe("unread count and mark read (T6.2)", () => {
     await followAndNotify(gitsy, sammy);
     await markAllRead(gitsy);
     expect(await getUnreadCount(sammy)).toBe(1);
+  });
+});
+
+describe("live bell (T6.3)", () => {
+  it("notify() sends the new unread count to the user's open tabs, and nothing for a duplicate", async () => {
+    const gitsy = await makeUser("gitsy");
+    const sammy = await makeUser("sammy");
+    const send = vi.spyOn(getHub(), "sendToUser");
+
+    await notify({ userId: gitsy, type: "follow", actorId: sammy });
+    expect(send).toHaveBeenLastCalledWith(gitsy, { type: "notifications", unread: 1 });
+
+    send.mockClear();
+    await notify({ userId: gitsy, type: "follow", actorId: sammy });
+    expect(send).not.toHaveBeenCalled();
+    send.mockRestore();
   });
 });
