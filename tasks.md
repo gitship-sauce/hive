@@ -61,8 +61,8 @@
 ## 7. Ship it
 - [x] **T7.1** The whole app in Docker (`Dockerfile` + `app` service).
   Done when: a fresh clone + `cp .env.example .env` + `docker compose up --build` gives a working app at http://localhost:3000.
-- [~] **T7.2** GitHub Actions runs `npm run check` and `npm run e2e` on every push.
-  Done when: the workflow is green on GitHub.
+- [x] **T7.2** ~~GitHub Actions runs `npm run check` and `npm run e2e` on every push.~~
+  Dropped: everything runs locally (`npm run check`, `npm run e2e`, `docker compose up --build`).
 - [x] **T7.3** README.
   Done when: someone new can start the app, run the tests and set up Firebase by following only the README.
 

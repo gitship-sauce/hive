@@ -1,7 +1,5 @@
 # Hive: a very basic social app, built with Claude Code
 
-[![CI](https://github.com/gitship-sauce/hive/actions/workflows/ci.yml/badge.svg)](https://github.com/gitship-sauce/hive/actions/workflows/ci.yml)
-
 Posts and a feed, follow and unfollow, search, live messages and notifications. It was built from an empty folder
 with Claude Code, one small task at a time, and every task has tests.
 
@@ -61,7 +59,7 @@ npm run e2e                       # browser tests
 
 Tests use a separate database, `social_test`, which Docker creates on its first start, so they never touch your data.
 The unit tests run against real Postgres. The browser tests drive real Chrome windows: two users message each other,
-follow each other and watch the bell change live. GitHub Actions runs all of it, plus the Docker build, on every push.
+follow each other and watch the bell change live.
 
 ## Turn on push (optional)
 
