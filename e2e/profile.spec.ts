@@ -8,14 +8,14 @@ test.describe("profile page (T3.1)", () => {
     await signUp(authorPage, author);
     await authorPage.getByLabel("What's happening?").fill("Hello from my profile");
     await authorPage.getByRole("button", { name: "Post" }).click();
-    await expect(authorPage.getByTestId("post")).toHaveCount(1);
+    await expect(authorPage.getByTestId("post").filter({ visible: true })).toHaveCount(1);
 
     await signUp(page, uniqueName("visitor"));
     await page.goto(`/u/${author}`);
     await expect(page.getByRole("heading", { name: `@${author}` })).toBeVisible();
-    await expect(page.getByTestId("followers")).toHaveText("0");
-    await expect(page.getByTestId("following")).toHaveText("0");
-    await expect(page.getByTestId("post")).toContainText("Hello from my profile");
+    await expect(page.getByTestId("followers").filter({ visible: true })).toHaveText("0");
+    await expect(page.getByTestId("following").filter({ visible: true })).toHaveText("0");
+    await expect(page.getByTestId("post").filter({ visible: true })).toContainText("Hello from my profile");
   });
 
   test("an unknown username shows User not found", async ({ page }) => {

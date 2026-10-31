@@ -37,7 +37,7 @@
   Done when: typing part of a username lists matching users (case doesn't matter, up to 20); symbols like `%` and `_` are searched as plain text.
 
 ## 5. Messages (live)
-- [ ] **T5.1** Our own server with a WebSocket at `/ws`.
+- [x] **T5.1** Our own server with a WebSocket at `/ws`.
   Done when: `npm run dev` runs through `server.ts`; a browser with a valid session connects to `/ws`; a connection without a session is refused; live reload still works.
 - [ ] **T5.2** Send and read messages.
   Done when: the chat page `/messages/[username]` shows the conversation oldest first; sending saves the message; nobody can read a conversation they are not in.
@@ -81,3 +81,5 @@
   Done when: typecheck runs `next typegen` first.
 - [x] **F7** The search browser test hung: Next.js keeps the page you came from in the page, hidden, so "Username" matched the sign-up box too.
   Done when: the search box has its own label and the test finds it by role, which skips hidden elements.
+- [x] **F8** After the WebSocket provider was added, 4 older browser tests failed now and then: while a page streams in, React keeps the new part in a hidden copy for a moment, and test-id and text lookups also match hidden elements.
+  Done when: those lookups only match visible elements, and the whole browser suite passes 3 runs in a row.

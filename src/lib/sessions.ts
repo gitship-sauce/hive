@@ -6,7 +6,7 @@ import { sessions, users } from "@/db/schema";
 export const SESSION_COOKIE = "session";
 export const SESSION_DAYS = 30;
 
-function hashToken(token: string) {
+export function hashToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 

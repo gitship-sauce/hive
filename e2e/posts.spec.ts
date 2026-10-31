@@ -6,7 +6,7 @@ test.describe("write a post (T2.1)", () => {
     await signUp(page, uniqueName("poster"));
     await page.getByLabel("What's happening?").fill("My first post on Hive");
     await page.getByRole("button", { name: "Post" }).click();
-    await expect(page.getByTestId("post").first()).toContainText("My first post on Hive");
+    await expect(page.getByTestId("post").filter({ visible: true }).first()).toContainText("My first post on Hive");
     await expect(page.getByLabel("What's happening?")).toHaveValue("");
   });
 
@@ -19,6 +19,6 @@ test.describe("write a post (T2.1)", () => {
     await page.getByLabel("What's happening?").fill("a".repeat(281));
     await page.getByRole("button", { name: "Post" }).click();
     await expect(page.locator("form").getByRole("alert")).toHaveText("Posts can be up to 280 characters.");
-    await expect(page.getByTestId("post")).toHaveCount(0);
+    await expect(page.getByTestId("post").filter({ visible: true })).toHaveCount(0);
   });
 });

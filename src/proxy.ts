@@ -11,6 +11,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Every page except log in, sign up, API routes and files like favicon.ico.
-  matcher: ["/((?!login|signup|api|_next/static|_next/image|.*\\.[a-z0-9]+$).*)"],
+  // Every page except log in, sign up, API routes, the WebSocket (it checks the session itself)
+  // and files like favicon.ico.
+  matcher: ["/((?!login|signup|api|ws$|_next/static|_next/image|.*\\.[a-z0-9]+$).*)"],
 };

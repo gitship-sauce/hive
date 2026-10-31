@@ -1,6 +1,14 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession, getUserBySessionToken, SESSION_COOKIE, type SessionUser } from "./sessions";
+import { getHub } from "./realtime";
+import {
+  createSession,
+  deleteSession,
+  getUserBySessionToken,
+  hashToken,
+  SESSION_COOKIE,
+  type SessionUser,
+} from "./sessions";
 
 /** The logged-in user, read from the session cookie and checked against the database. */
 export async function getCurrentUser(): Promise<SessionUser | null> {
@@ -30,6 +38,9 @@ export async function startSession(userId: number) {
 export async function endSession() {
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
-  if (token) await deleteSession(token);
+  if (token) {
+    await deleteSession(token);
+    getHub().closeSession(hashToken(token));
+  }
   jar.delete(SESSION_COOKIE);
 }

@@ -19,10 +19,10 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `npm run dev -- --port ${port}`,
+    command: "npm run dev",
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: { DATABASE_URL: process.env.TEST_DATABASE_URL ?? "" },
+    env: { DATABASE_URL: process.env.TEST_DATABASE_URL ?? "", PORT: String(port) },
   },
 });
