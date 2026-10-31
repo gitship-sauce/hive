@@ -27,8 +27,8 @@
   Done when: the feed shows my posts and the posts of people I follow, newest first, and never posts of people I don't follow.
 
 ## 3. Profile, follow and unfollow
-- [ ] **T3.1** Profile page `/u/[username]`.
-  Done when: it shows the user's posts and follower and following counts; an unknown username shows "User not found" (404).
+- [x] **T3.1** Profile page `/u/[username]`.
+  Done when: it shows the user's posts and follower and following counts; an unknown username shows "User not found" and is marked noindex.
 - [ ] **T3.2** Follow and unfollow.
   Done when: Follow adds one row and the counts go up; Unfollow removes it; following twice still gives one row; you can't follow yourself.
 
@@ -75,3 +75,5 @@
   Done when: the expiry check uses the database's `now()` and the sign-up browser test lands on the feed.
 - [x] **F4** The feed (T2.2) needs to know who I follow, but the follows table was planned for T3.2.
   Done when: the follows table comes with T2.2, and T3.2 only adds the buttons.
+- [x] **F5** T3.1 asked for a 404 status, but the profile page streams: the 200 status is sent before the user lookup finishes, and Next.js can't change it later. Next.js adds `noindex` instead.
+  Done when: T3.1's Done when says what really happens, and a test checks the noindex tag.
