@@ -11,11 +11,12 @@ export async function SiteHeader() {
 
   return (
     <header className="border-b border-neutral-200 dark:border-neutral-800">
-      <nav className="mx-auto flex h-14 w-full max-w-xl items-center gap-4 px-4 text-sm">
+      {/* Phones (360 px and up) get a shorter header: the logo already goes to the feed, and "Me" replaces the username. */}
+      <nav className="mx-auto flex h-14 w-full max-w-xl items-center gap-3 px-3 text-sm sm:gap-4 sm:px-4">
         <Link href="/" className="text-lg font-bold tracking-tight text-amber-500">
           Hive
         </Link>
-        <Link href="/" className="hover:underline">
+        <Link href="/" className="hidden hover:underline sm:inline">
           Feed
         </Link>
         <Link href="/search" className="hover:underline">
@@ -27,10 +28,11 @@ export async function SiteHeader() {
         <span className="ml-auto" />
         <NotificationBell initial={unread} />
         <Link href={`/u/${user.username}`} className="font-medium hover:underline">
-          @{user.username}
+          <span className="sm:hidden">Me</span>
+          <span className="hidden sm:inline">@{user.username}</span>
         </Link>
         <form action={logOut}>
-          <button type="submit" className="text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100">
+          <button type="submit" className="whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100">
             Log out
           </button>
         </form>

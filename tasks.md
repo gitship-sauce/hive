@@ -121,3 +121,9 @@
   Done when: after 20 seconds it says the push service didn't answer and names the Brave setting (checked in Chromium for Testing against the real Firebase project).
 - [x] **F25** In Brave with Google push off, Firebase failed at once with "AbortError: Registration failed - push service error", and the page showed only "Couldn't turn on".
   Done when: that error shows the same Brave help as F24. Real check: after turning the setting on and restarting Brave, the pop-up arrived with the tab closed.
+
+### From the full test before release
+- [x] **F26** On a phone the header didn't fit: "Log out" was pushed off the screen and every page scrolled sideways.
+  Done when: at 360 px wide every page fits and Log out is on screen ("Feed" hides because the logo goes there; "Me" replaces the username). The phone test fails on the old header.
+- [x] **F27** The browser tests failed for anyone who had set up Firebase: they read the developer's own `.env`, and one test expects push to be off.
+  Done when: the test server starts with the Firebase variables set to empty, so the tests behave the same for everyone.
