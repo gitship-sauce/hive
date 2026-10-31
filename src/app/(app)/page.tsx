@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { PostForm } from "@/components/post-form";
 import { PostList } from "@/components/post-list";
 import { requireUser } from "@/lib/auth";
-import { getPostsByAuthor } from "@/lib/posts";
+import { getFeed } from "@/lib/posts";
 
 export default function HomePage() {
   return (
@@ -16,12 +16,12 @@ export default function HomePage() {
 
 async function Feed() {
   const user = await requireUser();
-  const posts = await getPostsByAuthor(user.id);
+  const posts = await getFeed(user.id);
   return (
     <>
       <h1 className="sr-only">Hello, @{user.username}</h1>
       <PostForm />
-      <PostList posts={posts} empty="No posts yet. Write the first one!" />
+      <PostList posts={posts} empty="Your feed is empty. Write a post, or search for people to follow." />
     </>
   );
 }

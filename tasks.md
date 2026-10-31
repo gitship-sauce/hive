@@ -23,7 +23,7 @@
 ## 2. Posts and feed
 - [x] **T2.1** Write a post.
   Done when: a post of 1–280 characters is saved for the logged-in user; an empty or too-long post shows an error and saves nothing.
-- [ ] **T2.2** The feed.
+- [x] **T2.2** The feed.
   Done when: the feed shows my posts and the posts of people I follow, newest first, and never posts of people I don't follow.
 
 ## 3. Profile, follow and unfollow
@@ -73,3 +73,5 @@
   Done when: migrations run from a folder whose path has a space.
 - [x] **F3** The session check used `new Date()`, and Next.js stopped the page: it won't read the clock while it prerenders.
   Done when: the expiry check uses the database's `now()` and the sign-up browser test lands on the feed.
+- [x] **F4** The feed (T2.2) needs to know who I follow, but the follows table was planned for T3.2.
+  Done when: the follows table comes with T2.2, and T3.2 only adds the buttons.

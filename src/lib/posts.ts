@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray, or } from "drizzle-orm";
 import { db } from "@/db";
-import { posts, users } from "@/db/schema";
+import { follows, posts, users } from "@/db/schema";
 
 export type PostView = { id: number; body: string; createdAt: Date; author: string };
 
@@ -16,6 +16,22 @@ export async function getPostsByAuthor(authorId: number, limit = 50): Promise<Po
     .from(posts)
     .innerJoin(users, eq(users.id, posts.authorId))
     .where(eq(posts.authorId, authorId))
+    .orderBy(desc(posts.createdAt), desc(posts.id))
+    .limit(limit);
+}
+
+/** My posts and the posts of people I follow, newest first. */
+export async function getFeed(userId: number, limit = 50): Promise<PostView[]> {
+  const followed = db
+    .select({ id: follows.followingId })
+    .from(follows)
+    .where(eq(follows.followerId, userId));
+
+  return db
+    .select({ id: posts.id, body: posts.body, createdAt: posts.createdAt, author: users.username })
+    .from(posts)
+    .innerJoin(users, eq(users.id, posts.authorId))
+    .where(or(eq(posts.authorId, userId), inArray(posts.authorId, followed)))
     .orderBy(desc(posts.createdAt), desc(posts.id))
     .limit(limit);
 }

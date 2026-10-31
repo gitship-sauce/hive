@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { check, index, integer, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -35,5 +35,24 @@ export const posts = pgTable(
     index("posts_author_created_idx").on(t.authorId, t.createdAt),
     // The app checks this too; the database is the last line if a bug skips it.
     check("posts_body_length", sql`char_length(${t.body}) between 1 and 280`),
+  ],
+);
+
+export const follows = pgTable(
+  "follows",
+  {
+    followerId: integer("follower_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: integer("following_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    // One row per pair: following twice can't make a second row.
+    primaryKey({ columns: [t.followerId, t.followingId] }),
+    index("follows_following_idx").on(t.followingId),
+    check("follows_not_self", sql`${t.followerId} <> ${t.followingId}`),
   ],
 );
