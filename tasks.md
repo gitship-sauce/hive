@@ -29,7 +29,7 @@
 ## 3. Profile, follow and unfollow
 - [x] **T3.1** Profile page `/u/[username]`.
   Done when: it shows the user's posts and follower and following counts; an unknown username shows "User not found" and is marked noindex.
-- [ ] **T3.2** Follow and unfollow.
+- [x] **T3.2** Follow and unfollow.
   Done when: Follow adds one row and the counts go up; Unfollow removes it; following twice still gives one row; you can't follow yourself.
 
 ## 4. Search

@@ -31,3 +31,20 @@ export async function getProfile(username: string, viewerId: number): Promise<Pr
 
   return { id, username, followers: followers.n, following: following.n, followedByViewer: viewerRow.n > 0 };
 }
+
+export type FollowResult = { ok: true; created: boolean } | { ok: false; error: string };
+
+/** `created` is false when the viewer already followed them, so callers can skip a second notification. */
+export async function follow(followerId: number, followingId: number): Promise<FollowResult> {
+  if (followerId === followingId) return { ok: false, error: "You can't follow yourself." };
+  const inserted = await db
+    .insert(follows)
+    .values({ followerId, followingId })
+    .onConflictDoNothing()
+    .returning({ followerId: follows.followerId });
+  return { ok: true, created: inserted.length > 0 };
+}
+
+export async function unfollow(followerId: number, followingId: number) {
+  await db.delete(follows).where(and(eq(follows.followerId, followerId), eq(follows.followingId, followingId)));
+}

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { FollowButton } from "@/components/follow-button";
 import { PostList } from "@/components/post-list";
 import { requireUser } from "@/lib/auth";
 import { getProfile } from "@/lib/follows";
@@ -44,7 +45,11 @@ async function ProfileView({ params }: Pick<PageProps<"/u/[username]">, "params"
             following
           </span>
         </p>
-        {isMe && <p className="mt-3 text-sm text-neutral-500">This is you.</p>}
+        {isMe ? (
+          <p className="mt-3 text-sm text-neutral-500">This is you.</p>
+        ) : (
+          <FollowButton username={profile.username} following={profile.followedByViewer} />
+        )}
       </section>
       <PostList posts={posts} empty={isMe ? "You haven't posted yet." : `@${profile.username} hasn't posted yet.`} />
     </>
