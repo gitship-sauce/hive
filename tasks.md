@@ -49,7 +49,7 @@
 ## 6. Notifications
 - [x] **T6.1** Save notifications.
   Done when: following someone or sending them a message creates one notification for them; unfollowing doesn't.
-- [ ] **T6.2** Bell and notifications page.
+- [x] **T6.2** Bell and notifications page.
   Done when: the bell shows the unread count; opening `/notifications` lists them newest first and marks them read.
 - [ ] **T6.3** Live bell.
   Done when: B's bell count goes up without a refresh when A follows or messages B.

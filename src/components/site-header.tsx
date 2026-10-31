@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { logOut } from "@/app/auth-actions";
 import { getCurrentUser } from "@/lib/auth";
+import { getUnreadCount } from "@/lib/notifications";
+import { NotificationBell } from "./notification-bell";
 
 export async function SiteHeader() {
   const user = await getCurrentUser();
   if (!user) return null;
+  const unread = await getUnreadCount(user.id);
 
   return (
     <header className="border-b border-neutral-200 dark:border-neutral-800">
@@ -21,7 +24,9 @@ export async function SiteHeader() {
         <Link href="/messages" className="hover:underline">
           Messages
         </Link>
-        <Link href={`/u/${user.username}`} className="ml-auto font-medium hover:underline">
+        <span className="ml-auto" />
+        <NotificationBell initial={unread} />
+        <Link href={`/u/${user.username}`} className="font-medium hover:underline">
           @{user.username}
         </Link>
         <form action={logOut}>
