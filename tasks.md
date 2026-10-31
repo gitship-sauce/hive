@@ -7,9 +7,9 @@
   Done when: `npm run dev` shows the start page and `npm run lint` passes.
 - [x] **T0.2** Postgres in Docker (`docker-compose.yml` service `db`, saved in a named volume).
   Done when: `docker compose up -d db` starts a healthy database, and its data is still there after `down` and `up`.
-- [ ] **T0.3** Drizzle connected, with the users and sessions tables and a first migration.
+- [x] **T0.3** Drizzle connected, with the users and sessions tables and a first migration.
   Done when: `npm run db:migrate` creates the tables, and a test can insert and read back a user.
-- [ ] **T0.4** Test setup: Vitest on a separate test database, Playwright, and `npm run check`.
+- [x] **T0.4** Test setup: Vitest on a separate test database, Playwright, and `npm run check`.
   Done when: `npm run check` runs lint, types and one passing test, and `npm run e2e` opens the home page.
 
 ## 1. Sign up and log in
@@ -67,3 +67,7 @@
   Done when: someone new can start the app, run the tests and set up Firebase by following only the README.
 
 ## Found while building
+- [x] **F1** T0.3 says "a test can insert a user", but the tests only exist after T0.4. The plan had them in the wrong order.
+  Done when: T0.4 is built first and both are committed together.
+- [x] **F2** `npm run db:migrate` did nothing: the "run directly" check broke on the space in the folder path.
+  Done when: migrations run from a folder whose path has a space.
