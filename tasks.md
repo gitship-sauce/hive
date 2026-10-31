@@ -41,7 +41,7 @@
   Done when: `npm run dev` runs through `server.ts`; a browser with a valid session connects to `/ws`; a connection without a session is refused; live reload still works.
 - [x] **T5.2** Send and read messages.
   Done when: the chat page `/messages/[username]` shows the conversation oldest first; sending saves the message; nobody can read a conversation they are not in.
-- [ ] **T5.3** Messages arrive live.
+- [x] **T5.3** Messages arrive live.
   Done when: with A and B both on their chat page, A's message shows up in B's window without a refresh, and C never receives it.
 - [ ] **T5.4** Conversation list `/messages`.
   Done when: it lists everyone I've messaged or who messaged me, newest conversation first, with the last message.
@@ -83,3 +83,5 @@
   Done when: the search box has its own label and the test finds it by role, which skips hidden elements.
 - [x] **F8** After the WebSocket provider was added, 4 older browser tests failed now and then: while a page streams in, React keeps the new part in a hidden copy for a moment, and test-id and text lookups also match hidden elements.
   Done when: those lookups only match visible elements, and the whole browser suite passes 3 runs in a row.
+- [x] **F9** A message sent while the other person's socket was still connecting, or had dropped, never showed up until they reloaded.
+  Done when: after every (re)connect the chat loads the conversation again, and a test that cuts B's connection sees the missed message appear.

@@ -26,3 +26,8 @@ export async function sendMessage(page: Page, text: string) {
   await page.getByRole("textbox", { name: "Message" }).fill(text);
   await page.getByRole("button", { name: "Send" }).click();
 }
+
+/** Waits until the page's live connection to /ws is open. */
+export async function waitForLive(page: Page) {
+  await expect(page.locator("html")).toHaveAttribute("data-realtime", "connected");
+}

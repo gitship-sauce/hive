@@ -3,6 +3,7 @@
 import { requireUser } from "@/lib/auth";
 import { getUserIdByUsername } from "@/lib/follows";
 import { saveMessage, type MessageView } from "@/lib/messages";
+import { getHub } from "@/lib/realtime";
 import { firstError, messageBodySchema, usernameSchema } from "@/lib/validation";
 
 export type SendResult = { ok: true; message: MessageView } | { ok: false; error: string };
@@ -18,6 +19,10 @@ export async function sendMessage(toUsername: string, formData: FormData): Promi
   const body = messageBodySchema.safeParse(String(formData.get("body") ?? ""));
   if (!body.success) return { ok: false, error: firstError(body.error) };
 
+  // Saved first, then pushed: if the push fails, the message is still there on the next page load.
   const message = await saveMessage(me, { id: toId, username: to.data }, body.data);
+  const hub = getHub();
+  hub.sendToUser(toId, { type: "message", message });
+  hub.sendToUser(me.id, { type: "message", message }); // my other open tabs
   return { ok: true, message };
 }

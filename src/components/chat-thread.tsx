@@ -1,15 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { sendMessage } from "@/app/(app)/messages/actions";
 import type { MessageView } from "@/lib/messages";
+import { useRealtime } from "./realtime-provider";
 import { LocalTime } from "./local-time";
 
 type Props = { me: string; other: string; initial: MessageView[] };
 
 /** Adds messages by id, so a message that arrives twice (reply + live push) shows once. */
 function merge(list: MessageView[], incoming: MessageView) {
-  return list.some((m) => m.id === incoming.id) ? list : [...list, incoming];
+  if (list.some((m) => m.id === incoming.id)) return list;
+  return [...list, incoming].sort((x, y) => x.id - y.id);
 }
 
 export function ChatThread({ me, other, initial }: Props) {
@@ -18,6 +21,34 @@ export function ChatThread({ me, other, initial }: Props) {
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const { subscribe, connections } = useRealtime();
+  const router = useRouter();
+
+  // Messages sent while this tab wasn't connected never come over the socket.
+  // So after every (re)connect, load the conversation again; merge() drops the ones we have.
+  useEffect(() => {
+    if (connections > 0) router.refresh();
+  }, [connections, router]);
+
+  // A refresh brings a new `initial`; add its messages during render (React's pattern for
+  // "adjust state when a prop changes"), not in an effect that would render twice.
+  const [seenInitial, setSeenInitial] = useState(initial);
+  if (initial !== seenInitial) {
+    setSeenInitial(initial);
+    setList((l) => initial.reduce(merge, l));
+  }
+
+  useEffect(
+    () =>
+      subscribe((event) => {
+        if (event.type !== "message") return;
+        const m = event.message;
+        const inThisChat = (m.from === other && m.to === me) || (m.from === me && m.to === other);
+        if (inThisChat) setList((l) => merge(l, m));
+      }),
+    [subscribe, me, other],
+  );
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });

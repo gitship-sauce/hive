@@ -4,7 +4,12 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import type { RealtimeEvent } from "@/lib/realtime";
 
 type Listener = (event: RealtimeEvent) => void;
-type Realtime = { subscribe: (listener: Listener) => () => void; connected: boolean };
+type Realtime = {
+  subscribe: (listener: Listener) => () => void;
+  connected: boolean;
+  /** Goes up by one on every (re)connect, so pages can re-load what they missed while offline. */
+  connections: number;
+};
 
 const RealtimeContext = createContext<Realtime | null>(null);
 
@@ -12,6 +17,7 @@ const RealtimeContext = createContext<Realtime | null>(null);
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   const listeners = useRef(new Set<Listener>());
   const [connected, setConnected] = useState(false);
+  const [connections, setConnections] = useState(0);
 
   useEffect(() => {
     let ws: WebSocket | null = null;
@@ -25,6 +31,7 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
       ws.onopen = () => {
         retry = 0;
         setConnected(true);
+        setConnections((n) => n + 1);
       };
       ws.onmessage = (e) => {
         let event: RealtimeEvent;
@@ -53,14 +60,19 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const [value] = useState<Omit<Realtime, "connected">>(() => ({
+  useEffect(() => {
+    // Lets you (and the browser tests) see the connection state in DevTools.
+    document.documentElement.dataset.realtime = connected ? "connected" : "disconnected";
+  }, [connected]);
+
+  const [value] = useState<Pick<Realtime, "subscribe">>(() => ({
     subscribe(listener: Listener) {
       listeners.current.add(listener);
       return () => listeners.current.delete(listener);
     },
   }));
 
-  return <RealtimeContext value={{ ...value, connected }}>{children}</RealtimeContext>;
+  return <RealtimeContext value={{ ...value, connected, connections }}>{children}</RealtimeContext>;
 }
 
 export function useRealtime() {
