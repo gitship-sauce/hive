@@ -33,7 +33,7 @@
   Done when: Follow adds one row and the counts go up; Unfollow removes it; following twice still gives one row; you can't follow yourself.
 
 ## 4. Search
-- [ ] **T4.1** Search users.
+- [x] **T4.1** Search users.
   Done when: typing part of a username lists matching users (case doesn't matter, up to 20); symbols like `%` and `_` are searched as plain text.
 
 ## 5. Messages (live)
@@ -77,3 +77,7 @@
   Done when: the follows table comes with T2.2, and T3.2 only adds the buttons.
 - [x] **F5** T3.1 asked for a 404 status, but the profile page streams: the 200 status is sent before the user lookup finishes, and Next.js can't change it later. Next.js adds `noindex` instead.
   Done when: T3.1's Done when says what really happens, and a test checks the noindex tag.
+- [x] **F6** `npm run typecheck` failed on a fresh copy: the page types (`PageProps`) only exist after `next dev` has run once.
+  Done when: typecheck runs `next typegen` first.
+- [x] **F7** The search browser test hung: Next.js keeps the page you came from in the page, hidden, so "Username" matched the sign-up box too.
+  Done when: the search box has its own label and the test finds it by role, which skips hidden elements.

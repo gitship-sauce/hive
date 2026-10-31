@@ -15,7 +15,12 @@ export async function SiteHeader() {
         <Link href="/" className="hover:underline">
           Feed
         </Link>
-        <span className="ml-auto font-medium">@{user.username}</span>
+        <Link href="/search" className="hover:underline">
+          Search
+        </Link>
+        <Link href={`/u/${user.username}`} className="ml-auto font-medium hover:underline">
+          @{user.username}
+        </Link>
         <form action={logOut}>
           <button type="submit" className="text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100">
             Log out
