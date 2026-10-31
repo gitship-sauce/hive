@@ -111,3 +111,24 @@ test("a message sent while B was offline appears when B's connection comes back"
   await waitForLive(pageB);
   await expect(pageB.getByTestId("message").filter({ visible: true })).toHaveText([/Sent while you were offline/]);
 });
+
+test("the conversation list shows the latest message and updates live (T5.4)", async ({ browser }) => {
+  const [a, b] = [uniqueName("alice"), uniqueName("bob")];
+  const pageA = await browser.newPage();
+  const pageB = await browser.newPage();
+  await Promise.all([signUp(pageA, a), signUp(pageB, b)]);
+
+  await pageB.getByRole("link", { name: "Messages" }).click();
+  await expect(pageB.getByText("No conversations yet.", { exact: false }).filter({ visible: true })).toBeVisible();
+  await waitForLive(pageB);
+
+  await pageA.goto(`/messages/${b}`);
+  await sendMessage(pageA, "Are you there?");
+
+  const row = pageB.getByTestId("conversation").filter({ visible: true });
+  await expect(row).toHaveCount(1);
+  await expect(row).toContainText(`@${a}`);
+  await expect(row).toContainText("Are you there?");
+  await row.click();
+  await expect(pageB).toHaveURL(`/messages/${a}`);
+});

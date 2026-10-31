@@ -43,7 +43,7 @@
   Done when: the chat page `/messages/[username]` shows the conversation oldest first; sending saves the message; nobody can read a conversation they are not in.
 - [x] **T5.3** Messages arrive live.
   Done when: with A and B both on their chat page, A's message shows up in B's window without a refresh, and C never receives it.
-- [ ] **T5.4** Conversation list `/messages`.
+- [x] **T5.4** Conversation list `/messages`.
   Done when: it lists everyone I've messaged or who messaged me, newest conversation first, with the last message.
 
 ## 6. Notifications

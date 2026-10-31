@@ -18,6 +18,9 @@ export async function SiteHeader() {
         <Link href="/search" className="hover:underline">
           Search
         </Link>
+        <Link href="/messages" className="hover:underline">
+          Messages
+        </Link>
         <Link href={`/u/${user.username}`} className="ml-auto font-medium hover:underline">
           @{user.username}
         </Link>
