@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { FollowButton } from "@/components/follow-button";
@@ -48,7 +49,15 @@ async function ProfileView({ params }: Pick<PageProps<"/u/[username]">, "params"
         {isMe ? (
           <p className="mt-3 text-sm text-neutral-500">This is you.</p>
         ) : (
-          <FollowButton username={profile.username} following={profile.followedByViewer} />
+          <div className="flex items-center gap-3">
+            <FollowButton username={profile.username} following={profile.followedByViewer} />
+            <Link
+              href={`/messages/${profile.username}`}
+              className="mt-4 rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold hover:border-amber-500 dark:border-neutral-700"
+            >
+              Message
+            </Link>
+          </div>
         )}
       </section>
       <PostList posts={posts} empty={isMe ? "You haven't posted yet." : `@${profile.username} hasn't posted yet.`} />

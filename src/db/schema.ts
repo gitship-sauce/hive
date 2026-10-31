@@ -56,3 +56,24 @@ export const follows = pgTable(
     check("follows_not_self", sql`${t.followerId} <> ${t.followingId}`),
   ],
 );
+
+export const messages = pgTable(
+  "messages",
+  {
+    id: serial("id").primaryKey(),
+    senderId: integer("sender_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    recipientId: integer("recipient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("messages_pair_idx").on(t.senderId, t.recipientId, t.createdAt),
+    index("messages_recipient_idx").on(t.recipientId, t.createdAt),
+    check("messages_body_length", sql`char_length(${t.body}) between 1 and 1000`),
+    check("messages_not_self", sql`${t.senderId} <> ${t.recipientId}`),
+  ],
+);

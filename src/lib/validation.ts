@@ -31,3 +31,11 @@ export const postBodySchema = z
   .trim()
   .min(1, "Write something first.")
   .refine((b) => charCount(b) <= POST_MAX, `Posts can be up to ${POST_MAX} characters.`);
+
+export const MESSAGE_MAX = 1000;
+
+export const messageBodySchema = z
+  .string()
+  .trim()
+  .min(1, "Write a message first.")
+  .refine((b) => charCount(b) <= MESSAGE_MAX, `Messages can be up to ${MESSAGE_MAX} characters.`);

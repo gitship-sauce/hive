@@ -21,3 +21,8 @@ export async function logIn(page: Page, username: string, password = "password12
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Log in" }).click();
 }
+
+export async function sendMessage(page: Page, text: string) {
+  await page.getByRole("textbox", { name: "Message" }).fill(text);
+  await page.getByRole("button", { name: "Send" }).click();
+}
