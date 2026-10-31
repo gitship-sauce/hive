@@ -1,6 +1,6 @@
 # Hive: a very basic social app, built with Claude Code
 
-[![CI](https://github.com/gitship-sauce/social-app/actions/workflows/ci.yml/badge.svg)](https://github.com/gitship-sauce/social-app/actions/workflows/ci.yml)
+[![CI](https://github.com/gitship-sauce/hive/actions/workflows/ci.yml/badge.svg)](https://github.com/gitship-sauce/hive/actions/workflows/ci.yml)
 
 Posts and a feed, follow and unfollow, search, live messages and notifications. It was built from an empty folder
 with Claude Code, one small task at a time, and every task has tests.
@@ -19,7 +19,7 @@ with Claude Code, one small task at a time, and every task has tests.
 You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) running.
 
 ```bash
-git clone https://github.com/gitship-sauce/social-app.git && cd social-app
+git clone https://github.com/gitship-sauce/hive.git && cd hive
 cp .env.example .env
 docker compose up --build
 ```
