@@ -7,14 +7,14 @@ test.describe("search users (T4.1)", () => {
     await signUp(await browser.newPage(), target);
 
     await signUp(page, uniqueName("seeker"));
-    await page.getByRole("link", { name: "Search" }).click();
-    const box = page.getByRole("searchbox", { name: "Search by username" });
+    await page.getByRole("link", { name: "Search", exact: true }).click();
+    const box = page.getByRole("searchbox", { name: "Search by username", exact: true });
     await box.fill(target.slice(0, 8).toUpperCase());
     await box.press("Enter");
-    await expect(page.getByRole("link", { name: `@${target}` })).toBeVisible();
+    await expect(page.getByRole("link", { name: `@${target}`, exact: true })).toBeVisible();
 
-    await page.getByRole("link", { name: `@${target}` }).click();
-    await expect(page.getByRole("heading", { name: `@${target}` })).toBeVisible();
+    await page.getByRole("link", { name: `@${target}`, exact: true }).click();
+    await expect(page.getByRole("heading", { name: `@${target}`, exact: true })).toBeVisible();
   });
 
   test("% is searched as plain text and finds nobody", async ({ page }) => {

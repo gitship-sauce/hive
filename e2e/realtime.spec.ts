@@ -20,7 +20,7 @@ test.describe("our server with a WebSocket (T5.1)", () => {
     await expect.poll(() => ws).toBeDefined();
 
     const closed = ws!.waitForEvent("close");
-    await page.getByRole("button", { name: "Log out" }).click();
+    await page.getByRole("button", { name: "Log out", exact: true }).click();
     await closed;
     await expect(page).toHaveURL("/login");
   });

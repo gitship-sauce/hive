@@ -47,7 +47,7 @@
   Done when: it lists everyone I've messaged or who messaged me, newest conversation first, with the last message.
 
 ## 6. Notifications
-- [ ] **T6.1** Save notifications.
+- [x] **T6.1** Save notifications.
   Done when: following someone or sending them a message creates one notification for them; unfollowing doesn't.
 - [ ] **T6.2** Bell and notifications page.
   Done when: the bell shows the unread count; opening `/notifications` lists them newest first and marks them read.
@@ -85,3 +85,5 @@
   Done when: those lookups only match visible elements, and the whole browser suite passes 3 runs in a row.
 - [x] **F9** A message sent while the other person's socket was still connecting, or had dropped, never showed up until they reloaded.
   Done when: after every (re)connect the chat loads the conversation again, and a test that cuts B's connection sees the missed message appear.
+- [x] **F10** A message browser test clicked the header's "Messages" link instead of the profile's "Message" button: role names match parts of words unless told to match exactly ("Follow" also matched "Unfollow").
+  Done when: every role lookup in the browser tests is exact, and the suite passes 3 runs in a row.

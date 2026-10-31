@@ -1,5 +1,16 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  check,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -75,5 +86,31 @@ export const messages = pgTable(
     index("messages_recipient_idx").on(t.recipientId, t.createdAt),
     check("messages_body_length", sql`char_length(${t.body}) between 1 and 1000`),
     check("messages_not_self", sql`${t.senderId} <> ${t.recipientId}`),
+  ],
+);
+
+export const notificationType = pgEnum("notification_type", ["follow", "message"]);
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: serial("id").primaryKey(),
+    /** Who gets the notification. */
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: notificationType("type").notNull(),
+    /** Who did it. */
+    actorId: integer("actor_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    messageId: integer("message_id").references(() => messages.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    readAt: timestamp("read_at", { withTimezone: true }),
+  },
+  (t) => [
+    index("notifications_user_created_idx").on(t.userId, t.createdAt),
+    // One "followed you" per person: follow, unfollow, follow again doesn't notify twice.
+    uniqueIndex("notifications_one_follow_idx").on(t.userId, t.actorId).where(sql`${t.type} = 'follow'`),
   ],
 );

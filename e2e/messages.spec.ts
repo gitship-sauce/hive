@@ -12,11 +12,11 @@ test.describe("send and read messages (T5.2)", () => {
     await signUp(pageC, c);
 
     await pageA.goto(`/u/${b}`);
-    await pageA.getByRole("link", { name: "Message" }).click();
+    await pageA.getByRole("link", { name: "Message", exact: true }).click();
     await expect(pageA).toHaveURL(`/messages/${b}`);
     await sendMessage(pageA, "Hi! Want to build an app?");
     await expect(pageA.getByTestId("message").filter({ visible: true })).toHaveText([/Hi! Want to build an app\?/]);
-    await expect(pageA.getByRole("textbox", { name: "Message" })).toHaveValue("");
+    await expect(pageA.getByRole("textbox", { name: "Message", exact: true })).toHaveValue("");
 
     await pageB.goto(`/messages/${a}`);
     await expect(pageB.getByTestId("message").filter({ visible: true })).toHaveText([/Hi! Want to build an app\?/]);
@@ -118,7 +118,7 @@ test("the conversation list shows the latest message and updates live (T5.4)", a
   const pageB = await browser.newPage();
   await Promise.all([signUp(pageA, a), signUp(pageB, b)]);
 
-  await pageB.getByRole("link", { name: "Messages" }).click();
+  await pageB.getByRole("link", { name: "Messages", exact: true }).click();
   await expect(pageB.getByText("No conversations yet.", { exact: false }).filter({ visible: true })).toBeVisible();
   await waitForLive(pageB);
 

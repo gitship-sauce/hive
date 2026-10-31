@@ -3,6 +3,7 @@
 import { requireUser } from "@/lib/auth";
 import { getUserIdByUsername } from "@/lib/follows";
 import { saveMessage, type MessageView } from "@/lib/messages";
+import { notify } from "@/lib/notify";
 import { getHub } from "@/lib/realtime";
 import { firstError, messageBodySchema, usernameSchema } from "@/lib/validation";
 
@@ -24,5 +25,6 @@ export async function sendMessage(toUsername: string, formData: FormData): Promi
   const hub = getHub();
   hub.sendToUser(toId, { type: "message", message });
   hub.sendToUser(me.id, { type: "message", message }); // my other open tabs
+  await notify({ userId: toId, type: "message", actorId: me.id, messageId: message.id });
   return { ok: true, message };
 }

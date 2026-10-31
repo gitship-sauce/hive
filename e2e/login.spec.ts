@@ -12,7 +12,7 @@ test.describe("log in and log out (T1.2)", () => {
 
     await logIn(other, name);
     await expect(other).toHaveURL("/");
-    await expect(other.getByRole("heading", { name: `Hello, @${name}` })).toBeVisible();
+    await expect(other.getByRole("heading", { name: `Hello, @${name}`, exact: true })).toBeVisible();
   });
 
   test("log out ends the session, so the old cookie stops working", async ({ page, browser }) => {
@@ -20,7 +20,7 @@ test.describe("log in and log out (T1.2)", () => {
     const [oldCookie] = (await page.context().cookies()).filter((c) => c.name === "session");
     expect(oldCookie).toBeDefined();
 
-    await page.getByRole("button", { name: "Log out" }).click();
+    await page.getByRole("button", { name: "Log out", exact: true }).click();
     await expect(page).toHaveURL("/login");
 
     // Someone who copied the cookie before log out can't use it.

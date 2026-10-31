@@ -11,7 +11,7 @@ export async function signUp(page: Page, username: string, password = "password1
   await page.goto("/signup");
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
-  await page.getByRole("button", { name: "Sign up" }).click();
+  await page.getByRole("button", { name: "Sign up", exact: true }).click();
   await expect(page).toHaveURL("/");
 }
 
@@ -19,12 +19,12 @@ export async function logIn(page: Page, username: string, password = "password12
   await page.goto("/login");
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
-  await page.getByRole("button", { name: "Log in" }).click();
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
 }
 
 export async function sendMessage(page: Page, text: string) {
-  await page.getByRole("textbox", { name: "Message" }).fill(text);
-  await page.getByRole("button", { name: "Send" }).click();
+  await page.getByRole("textbox", { name: "Message", exact: true }).fill(text);
+  await page.getByRole("button", { name: "Send", exact: true }).click();
 }
 
 /** Waits until the page's live connection to /ws is open. */

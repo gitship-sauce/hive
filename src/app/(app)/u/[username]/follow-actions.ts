@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { follow, getUserIdByUsername, unfollow } from "@/lib/follows";
+import { notify } from "@/lib/notify";
 import { usernameSchema } from "@/lib/validation";
 
 export type FollowState = { error?: string };
@@ -17,6 +18,7 @@ export async function setFollowing(username: string, shouldFollow: boolean): Pro
   if (shouldFollow) {
     const result = await follow(viewer.id, targetId);
     if (!result.ok) return { error: result.error };
+    if (result.created) await notify({ userId: targetId, type: "follow", actorId: viewer.id });
   } else {
     await unfollow(viewer.id, targetId);
   }
